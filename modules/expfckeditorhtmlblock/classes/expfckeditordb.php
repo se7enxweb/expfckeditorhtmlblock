@@ -52,27 +52,15 @@
     {
       if (!$this->db)
       {
-        $ini =& eZINI::instance ('module.ini.append.php', 
-          'extension/smilesocle/settings');
-        $server = $ini->variable ('SocleDatabaseSettings', 'Server');
-        $user = $ini->variable ('SocleDatabaseSettings', 'User');
-        $password = $ini->variable ('SocleDatabaseSettings', 'Password');
-        $database = $ini->variable ('SocleDatabaseSettings', 'Database');
-
-        $this->db =& eZDB::instance (false, array (
-          'server' => $server,
-          'user' => $user,
-          'password' => $password,
-          'database' => $database
-        ), true);
+        $this->db =& eZDB::instance ();
       }
     }
 		
-		function getRelatedObjects($object, $version)
+		public static function getRelatedObjects($object, $version)
 		{			
-				$result = array() ;
-							
-				$related_object = eZContentObject::relatedContentObjectArray($version, $object) ;
+				$result = array();
+        $co = new eZContentObject($object) ;
+				$related_object = $co->relatedContentObjectArray($version, $object) ;
 				
 				if (is_array($related_object))
 				{
