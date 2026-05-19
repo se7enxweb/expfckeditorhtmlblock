@@ -46,8 +46,8 @@ div#maincontent {ldelim} margin-left: {sum( $left_menu_width, 0.5 )}em; {rdelim}
 
 <!-- Children START -->
 
-<script src={'extension/smilefckeditor/fckeditor/editor/dialog/common/fck_dialog_common.js'|ezroot()} type="text/javascript"></script>
-<script src={'extension/smilefckeditor/javascript/mediabrowser.js'|ezroot()} type="text/javascript"></script>
+<script src={'extension/expfckeditorhtmlblock/fckeditor/editor/dialog/common/fck_dialog_common.js'|ezroot()} type="text/javascript"></script>
+<script src={'extension/expfckeditorhtmlblock/javascript/mediabrowser.js'|ezroot()} type="text/javascript"></script>
 
 
 

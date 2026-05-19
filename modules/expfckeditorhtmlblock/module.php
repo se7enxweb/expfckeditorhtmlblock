@@ -4,7 +4,6 @@
 //
 // Authors:
 //   Emmanuel Saracco <emmanuel.saracco@smile.fr>
-//	 Julian Roblin <julian.roblin@smile.fr>
 //
 // This source file is part of the eZ publish (tm) Open Source Content
 // Management System.
@@ -35,30 +34,19 @@
 // you.
 //
 
-  include_once ('kernel/common/template.php');
-  include_once ('lib/ezutils/classes/ezhttptool.php');
-  include_once ('functions.php');
-	include_once ('classes/smilefckeditordb.php');
+  $Module = array (
+    'name' => 'expfckeditorhtmlblock',
+    'variable_params' => true
+  );
+  
+  $ViewList = array ();
 
-  $tpl =& templateInit();
-  $http =& eZHTTPTool::instance();
-  $module =& $Params['Module'];
-  $Result = array ();
-	
-	$db = new smileFCKEditorDB() ;
+  $ViewList['insertlink'] = array (
+    'script' => 'insertlink.php',
+    'default_navigation_part' => 'exp_fckeditorhtmlblock_navigationpart',
+    'single_post_actions' => array ('insertButton' => 'insertAction')
+  );
 
-	$object = eZContentObject::fetch($module->ViewParameters[0]) ;
-	
-	if (isset($object))
-	{
-	  $tpl->setVariable('object', $module->ViewParameters[0]) ;
-		$tpl->setVariable('version', $module->ViewParameters[1]) ;	
-	
-		$Result['content'] =& $tpl->fetch ('design:smilefckeditor/insertlink.tpl');
-	}
-	else
-	{
-		$module->redirectTo('/') ;
-	}
-	
+  $FunctionList['insertlink'] = array ();
+
 ?>

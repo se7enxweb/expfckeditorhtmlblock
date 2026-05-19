@@ -144,7 +144,7 @@
     <td width="200">{$owner_object.class_name}</td>
 </tr>
 {/let}
-{let related_object_list=fetch('smilefckeditor', 'smileGetRelatedObjects', hash('object', $object , 'version', $version))}
+{let related_object_list=fetch('expfckeditorhtmlblock', 'getRelatedObjects', hash('object', $object , 'version', $version))}
 {section show=$related_object_list}
 <tr><th colspan="3">Related objects</th></tr>
 {section loop=$related_object_list sequence=array(bglight, bgdark)}

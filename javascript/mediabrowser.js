@@ -3,7 +3,7 @@
   window.onload = function () {
     // Show the "Ok" button.
     window.parent.SetOkButton( true ) ;
-    if(window.parent.document.title == 'SmileeZimage') {
+    if(window.parent.document.title == 'expeZimage') {
     	document.forms[1].nurBilder.value="true";
     }
 	else {

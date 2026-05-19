@@ -34,9 +34,9 @@
 // you.
 //
 
-include_once( "kernel/classes/ezdatatype.php" );
-include_once ('lib/ezutils/classes/ezhttptool.php');
-include_once ('lib/ezi18n/classes/eztextcodec.php');
+// include_once( "kernel/classes/ezdatatype.php" );
+// include_once ('lib/ezutils/classes/ezhttptool.php');
+// include_once ('lib/ezi18n/classes/eztextcodec.php');
 
 define( 'EZ_DATATYPESTRING_EZHTML', 'ezhtml' );
 define( 'EZ_DATATYPESTRING_EZHTML_COLS_FIELD', 'data_int1' );
@@ -47,16 +47,16 @@ class ezhtmltype extends eZDataType
     /*!
       Constructor
     */
-    function ezhtmltype()
+    function __construct()
     {
-        $this->eZDataType( EZ_DATATYPESTRING_EZHTML, ezi18n('content', 'HTML fields'), array( 'serialize_supported' => true,
+        $this->eZDataType( EZ_DATATYPESTRING_EZHTML, ezpI18n::tr('content', 'HTML Field Block'), array( 'serialize_supported' => true,
                                   'object_serialize_map' => array( 'data_text' => 'text' ) )  );
     }
 	
     /*!
      Set class attribute value for template version
     */
-    function initializeClassAttribute( &$classAttribute )
+    function initializeClassAttribute( $classAttribute )
     {
         if ( $classAttribute->attribute( EZ_DATATYPESTRING_EZHTML_COLS_FIELD ) == null )
             $classAttribute->setAttribute( EZ_DATATYPESTRING_EZHTML_COLS_FIELD, 10 );
@@ -66,7 +66,7 @@ class ezhtmltype extends eZDataType
     /*!
      Sets the default value.
     */
-    function initializeObjectAttribute( &$contentObjectAttribute, $currentVersion, &$originalContentObjectAttribute )
+    function initializeObjectAttribute( $contentObjectAttribute, $currentVersion, $originalContentObjectAttribute )
     {
         if ( $currentVersion != false )
         {
@@ -88,21 +88,21 @@ class ezhtmltype extends eZDataType
      Validates the input and returns true if the input was
      valid for this datatype.
     */
-    function validateObjectAttributeHTTPInput( &$http, $base, &$contentObjectAttribute )
+    function validateObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
         return $this->validateAttributeHTTPInput( $http, $base, $contentObjectAttribute, false );
     }
 
     /*!
     */
-    function validateCollectionAttributeHTTPInput( &$http, $base, &$contentObjectAttribute )
+    function validateCollectionAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
         return $this->validateAttributeHTTPInput( $http, $base, $contentObjectAttribute, true );
     }
 	
     /*!
     */
-    function validateAttributeHTTPInput( &$http, $base, &$contentObjectAttribute, $isInformationCollector )
+    function validateAttributeHTTPInput( $http, $base, $contentObjectAttribute, $isInformationCollector )
     {
         if ( $http->hasPostVariable( $base . '_data_text_' . $contentObjectAttribute->attribute( 'id' ) ) )
         {
@@ -116,21 +116,21 @@ class ezhtmltype extends eZDataType
                 {
                     if ( $data == "" )
                     {
-                        $contentObjectAttribute->setValidationError( ezi18n( 'kernel/classes/datatypes',
+                        $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                              'Input required.' ) );
-                        return EZ_INPUT_VALIDATOR_STATE_INVALID;
+                        return eZInputValidator::STATE_INVALID;
                     }
                 }
             }
         }
 		
-        return EZ_INPUT_VALIDATOR_STATE_ACCEPTED;
+        return eZInputValidator::STATE_ACCEPTED;
     }
 	
     /*!
      Fetches the http post var string input and stores it in the data instance.
     */
-    function fetchObjectAttributeHTTPInput( &$http, $base, &$contentObjectAttribute )
+    function fetchObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
         if ( $http->hasPostVariable( $base . "_data_text_" . $contentObjectAttribute->attribute( "id" ) ) )
         {
@@ -145,7 +145,7 @@ class ezhtmltype extends eZDataType
     /*!
      Fetches the http post variables for collected information
     */
-    function fetchCollectionAttributeHTTPInput( &$collection, &$collectionAttribute, &$http, $base, &$contentObjectAttribute )
+    function fetchCollectionAttributeHTTPInput( $collection, $collectionAttribute, $http, $base, $contentObjectAttribute )
     {
         $dataText =& $http->postVariable( $base . "_data_text_" . $contentObjectAttribute->attribute( "id" ) );
         $collectionAttribute->setAttribute( 'data_text', $dataText );
@@ -157,7 +157,7 @@ class ezhtmltype extends eZDataType
      Store the content. Since the content has been stored in function 
      fetchObjectAttributeHTTPInput(), this function is with empty code.
     */
-    function storeObjectAttribute( &$contentObjectattribute )
+    function storeObjectAttribute( $contentObjectattribute )
     {
     }
 	
@@ -174,8 +174,8 @@ class ezhtmltype extends eZDataType
      \reimp
      Inserts the string \a $string in the \c 'data_text' database field.
     */
-    function insertSimpleString( &$object, $objectVersion, $objectLanguage,
-                                 &$objectAttribute, $string,
+    function insertSimpleString( $object, $objectVersion, $objectLanguage,
+                                 $objectAttribute, $string,
                                  &$result )
     {
         $result = array( 'errors' => array(),
@@ -189,12 +189,12 @@ class ezhtmltype extends eZDataType
     /*!
      Returns the content.
     */
-    function &objectAttributeContent( &$contentObjectAttribute )
+    function objectAttributeContent( $contentObjectAttribute )
     {
         return $contentObjectAttribute->attribute( "data_text" );
     }
 	
-	function fetchClassAttributeHTTPInput( &$http, $base, &$classAttribute )
+	function fetchClassAttributeHTTPInput( $http, $base, $classAttribute )
     {
         $column = $base .EZ_DATATYPESTRING_EZHTML_COLS_VARIABLE . $classAttribute->attribute( 'id' );
         if ( $http->hasPostVariable( $column ) )
@@ -242,7 +242,7 @@ class ezhtmltype extends eZDataType
     /*!
      Returns the value as it will be shown if this attribute is used in the object name pattern.
     */
-    function title( &$contentObjectAttribute )
+    function title( $contentObjectAttribute, $name = null )
     {
 		
 		
@@ -260,7 +260,7 @@ class ezhtmltype extends eZDataType
     /*!
      \reimp
     */
-    function &serializeContentClassAttribute( &$classAttribute, &$attributeNode, &$attributeParametersNode )
+    function serializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
         $textColumns = $classAttribute->attribute( EZ_DATATYPESTRING_EZHTML_COLS_FIELD );
         $attributeParametersNode->appendChild( eZDOMDocument::createElementTextNode( 'text-column-count', $textColumns ) );
@@ -269,7 +269,7 @@ class ezhtmltype extends eZDataType
     /*!
      \reimp
     */
-    function &unserializeContentClassAttribute( &$classAttribute, &$attributeNode, &$attributeParametersNode )
+    function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
         $textColumns = $attributeParametersNode->elementTextContentByName( 'text-column-count' );
         $classAttribute->setAttribute( EZ_DATATYPESTRING_EZHTML_COLS_FIELD, $textColumns );

@@ -36,8 +36,8 @@ FCKConfig.SkinPath = FCKConfig.BasePath + 'skins/default/' ;
 FCKConfig.PluginsPath = FCKConfig.BasePath + 'plugins/' ;
 
 // FCKConfig.Plugins.Add( 'placeholder', 'de,en,fr,it,pl' ) ;
-//FCKConfig.Plugins.Add('SmileeZlink') ;
-//FCKConfig.Plugins.Add('SmileeZimage') ;
+//FCKConfig.Plugins.Add('expeZlink') ;
+//FCKConfig.Plugins.Add('expeZimage') ;
 
 FCKConfig.ProtectedSource.Add( /<script[\s\S]*?\/script>/gi ) ;	// <SCRIPT> tags.
 // FCKConfig.ProtectedSource.Add( /<%[\s\S]*?%>/g ) ;	// ASP style server side code <%...%>

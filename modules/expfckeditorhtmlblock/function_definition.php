@@ -35,18 +35,18 @@
 // you.
 //
 
-  define ('INCLUDE_FILE', 'extension/smilefckeditor/modules/smilefckeditor/classes/smilefckeditorfunctioncollection.php');
+  define ('INCLUDE_FILE', 'extension/expfckeditorhtmlblock/modules/expfckeditorhtmlblock/classes/expfckeditorfunctioncollection.php');
 
   $FunctionList = array ();
 
-	/* smileGetRelatedObjects */
+	/* getRelatedObjects */
 	
-	$FunctionList['smileGetRelatedObjects'] = array (
-    'name' => 'smileGetRelatedObjects',
+	$FunctionList['getRelatedObjects'] = array (
+    'name' => 'getRelatedObjects',
     'call_method' => array (
       'include_file' => INCLUDE_FILE,
-      'class' => 'smileFCKEditorFunctionCollection',
-      'method' => 'smileGetRelatedObjects'
+      'class' => 'expFCKEditorFunctionCollection',
+      'method' => 'getRelatedObjects'
     ),
     'parameter_type' => 'standard',
     'parameters' => array (

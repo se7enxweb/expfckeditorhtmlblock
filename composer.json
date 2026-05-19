@@ -1,0 +1,20 @@
+{
+    "name": "se7enxweb/expfckeditorhtmlblock",
+    "description": "Add Simple To Use HTML Block With HTML Editor Toolbar capabilities to Exponential",
+    "type": "ezpublish-legacy-extension",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name" : "7x",
+            "homepage": "https://se7enx.com",
+            "email": "info@se7enx.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "se7enxweb/ezpublish-legacy-installer": "*"
+    },
+    "extra": {
+        "ezpublish-legacy-extension-name": "expfckeditorhtmlblock"
+    }
+}

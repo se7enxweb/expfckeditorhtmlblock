@@ -37,25 +37,25 @@
 
   include_once( 'access.php' );
   include_once ('kernel/classes/ezcontentobjecttreenode.php');
-  include_once ('smilefckeditordb.php');
-  include_once ('extension/smilefckeditor/modules/smilefckeditor/functions.php');
+  include_once ('expfckeditordb.php');
+  include_once ('extension/expfckeditorhtmlblock/modules/expfckeditorhtmlblock/functions.php');
 
 
-  class smileFCKEditorFunctionCollection
+  class expFCKEditorFunctionCollection
   {
     var $db = null;
     var $ini = null;
     var $siteAccessBackups = array ();
 
-    function smileFCKEditorFunctionCollection ()
+    function __construct ()
     {
-      if (!$this->db) $this->db = new smileFCKEditorDB ();
+      if (!$this->db) $this->db = new expFCKEditorDB ();
       if (!$this->ini) $this->ini =& eZINI::instance();
     }
 		
-		function smileGetRelatedObjects($object, $version)
+		function getRelatedObjects($object, $version)
 		{		
-			$result = $this->db->smileGetRelatedObjects($object, $version) ;
+			$result = $this->db->getRelatedObjects($object, $version) ;
 			
 			return array('result' => $result) ;
 		}

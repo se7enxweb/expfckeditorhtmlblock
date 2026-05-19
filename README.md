@@ -1,81 +1,188 @@
-SmileFCKeditor - Extension that integrates FCKeditor
-====================================================
+expfckeditorhtmlblock — FCKeditor HTML Block Datatype
+======================================================
 
-* By Maxime THOMAS <maxime.thomas@smile.fr> - � 2006 Smile
+An eZ Publish extension that replaces the standard HTML text area with a full
+FCKeditor 2.x WYSIWYG rich-text editor for the `ezhtml` datatype.
 
+Originally based on SmileFCKeditor by Smile (2006). Maintained and updated for
+PHP 8 compatibility and modern browser support.
 
-Description
------------
-This extension provides an overload HTMLFields datatype that displays a text box FCKeditor.
-It has two plugins Solicitating FCK:
-- SmileeZimage: Selecting an image in the media eZpublish.
-- SmileeZlink: Selecting a content in the media eZpublish.
+---
 
+Features
+--------
+- Replaces plain `<textarea>` inputs with an embedded FCKeditor 2 instance
+- Configurable toolbar sets via `fckeditor/fckconfig.js`
+- Two optional eZ Publish content-browser plugins:
+  - **expeZlink** — browse and insert links to eZ Publish content objects
+  - **expeZimage** — browse and insert images from the eZ Publish media library
+- Template operator `explinktomedia` converts `expobject://<node_id>` URIs into
+  resolved links at render time
+- Media browser with list, detailed, and thumbnail views
+- Full WYSIWYG editing including tables, lists, colours, special characters,
+  page breaks, and smileys
+- Source view toggle for direct HTML editing
 
-Prerequisites
-----------
-Requires that the browser supports javascript.
+---
 
-Constraints
------------
-The extension name should remain smilefckeditor.
-It is necessary that javascript is enabled for the toolbar fck is enabled.
+Requirements
+------------
+- eZ Publish 4.x / Exponential CMS
+- PHP 7.4 or 8.x
+- JavaScript enabled in the browser
+- Apache `mod_rewrite` or nginx equivalent
+
+---
 
 Installation
 ------------
 
-1 - Place the directory "smilefckeditor" in the "extension"
-2 - Modify httpd.conf in conf directory of the installation directory of Apache.
-In the rewrite rules dedicated to eZpublish, add the following lines:
+### 1. Place the extension
 
-RewriteRule ^ / extension / smilefckeditor / javascript /. * - [L]
-RewriteRule ^ / extension / smilefckeditor / fckeditor /. * - [L]
+Copy or symlink the `expfckeditorhtmlblock` directory into your eZ Publish
+`extension/` folder.
 
-3 - Enable the extension (in site.ini or in the back office)
+### 2. Add rewrite rules
 
-Launching
----------
-The template of the datatype is called automatically in the back office, so there is nothing to run: the
-FCK is dynamically loaded.
+Add the following lines to your `.htaccess` (or nginx equivalent) **before**
+the catch-all `RewriteRule .* index.php` line:
+
+```apache
+RewriteRule ^extension/expfckeditorhtmlblock/javascript/.* - [L]
+RewriteRule ^extension/[^/]+/fckeditor/.* - [L]
+```
+
+### 3. Enable the extension
+
+Either via the back-office (**Setup → Extensions**) or by adding to your
+`settings/override/site.ini.append.php`:
+
+```ini
+[ExtensionSettings]
+ActiveExtensions[]=expfckeditorhtmlblock
+```
+
+### 4. Clear caches
+
+Clear both eZ Publish caches and your browser cache after installation:
+
+```bash
+php bin/php/ezcache.php --clear-all
+```
+
+---
 
 Configuration
 -------------
-To configure FCK, just edit the file:
 
-smilefckeditor / fckeditor / fckconfig.js
+### Toolbar
 
-And to modify the table:
+Edit `fckeditor/fckconfig.js` and modify the `FCKConfig.ToolbarSets["Default"]`
+array to enable or reorder toolbar buttons.
 
-FCKConfig.ToolbarSets ["Default"]
+### Optional content-browser plugins
 
-Corresponding to all toolbars to fck.
-The names of plugins that could add and are SmileeZlink SmileeZimage.
-Uncomment the lines:
+Uncomment the relevant lines in `fckeditor/fckconfig.js`:
 
-/ / FCKConfig.Plugins.Add ('SmileeZlink');
-/ / FCKConfig.Plugins.Add ('SmileeZimage');
+```javascript
+FCKConfig.Plugins.Add('expeZlink');   // Insert links to eZ Publish content
+FCKConfig.Plugins.Add('expeZimage');  // Insert images from eZ Publish media
+```
 
+### Custom configuration file per template
 
-To make test configurations, we can modify the template editing, specifying the
-configuration file to load. This is in the file:
+In `design/standard/templates/content/datatype/edit/ezhtml.tpl`, the config
+path can be made conditional:
 
-smilefckeditor / design / standard / templates / content / datatype / edit / ezhtml.tpl
+```smarty
+{if <my_condition>}
+  oFCKeditor{$attribute.id}.Config["CustomConfigurationsPath"] = "{ezsys('wwwdir')}/extension/expfckeditorhtmlblock/fckeditor/fckconfig1.js";
+{else}
+  oFCKeditor{$attribute.id}.Config["CustomConfigurationsPath"] = "{ezsys('wwwdir')}/extension/expfckeditorhtmlblock/fckeditor/fckconfig2.js";
+{/if}
+```
 
-And the value to change is:
+---
 
-  oFCKeditor} {$ attribute.id. Config ["CustomConfigurationsPath"] = "{ezsys ('wwwdir')} / extension / smilefckeditor / fckeditor / fckconfig.js" / / configuration file js
+Internal URL scheme
+-------------------
 
-That could possibly replace with:
+The `explinktomedia` template operator resolves internal object references of
+the form `expobject://<node_id>` into full URLs at render time. These are
+generated by the content browser and stored in the HTML content.
 
-{If} <ma condition>
-   oFCKeditor} {$ attribute.id. Config ["CustomConfigurationsPath"] = "{ezsys ('wwwdir')} / extension/smilefckeditor/fckeditor/fckconfig1.js" / / configuration file js
-{Else}
-   oFCKeditor} {$ attribute.id. Config ["CustomConfigurationsPath"] = "{ezsys ('wwwdir')} / extension/smilefckeditor/fckeditor/fckconfig2.js" / / configuration file js
-{/ If}
+---
 
+File structure
+--------------
 
-CAUTION
----------
-So that changes take effect, it is recommended to empty caches and caches and eZpublish
-Browser!
+```
+expfckeditorhtmlblock/
+├── autoloads/
+│   ├── eztemplateautoload.php      Template operator registration
+│   ├── explinktomedia.php          explinktomedia operator (resolves expobject:// URIs)
+│   └── stringoperators.php         Additional string template operators
+├── datatypes/
+│   └── ezhtml/
+│       └── ezhtmltype.php          eZDataType subclass for the ezhtml field
+├── design/
+│   ├── admin/templates/
+│   │   └── expfckeditorhtmlblock/
+│   │       └── insertlink.tpl      Link insertion dialog template
+│   └── standard/templates/
+│       ├── content/datatype/
+│       │   ├── edit/ezhtml.tpl     Edit-mode template (loads FCKeditor)
+│       │   ├── view/ezhtml.tpl     View-mode template
+│       │   └── pdf/ezhtml.tpl      PDF output template
+│       ├── class/datatype/
+│       │   ├── edit/ezhtml.tpl     Class attribute edit template
+│       │   └── view/ezhtml.tpl     Class attribute view template
+│       ├── mediabrowser_full_detailed.tpl
+│       ├── mediabrowser_full_list.tpl
+│       ├── mediabrowser_full_thumbnail.tpl
+│       └── pagelayout_mediabrowser.tpl
+├── fckeditor/                       FCKeditor 2 core (vendored)
+│   ├── fckconfig.js                 Main FCKeditor configuration
+│   ├── fckeditor.js                 FCKeditor loader
+│   └── editor/                     Editor UI, dialogs, plugins, skins
+├── javascript/
+│   └── mediabrowser.js             Media browser JS
+├── modules/
+│   └── expfckeditorhtmlblock/      eZ Publish module (insertlink view)
+│       ├── module.php
+│       ├── function_definition.php
+│       ├── functions.php
+│       ├── insertlink.php
+│       └── classes/
+│           ├── expfckeditordb.php
+│           └── expfckeditorfunctioncollection.php
+├── settings/
+│   ├── content.ini.append.php
+│   ├── design.ini.append.php
+│   ├── module.ini.append.php
+│   └── site.ini.append.php
+└── README.md
+```
 
+---
+
+Upgrading from smilefckeditor
+------------------------------
+
+If upgrading from the original `smilefckeditor` extension:
+
+1. The extension directory must be renamed from `smilefckeditor` to
+   `expfckeditorhtmlblock` (or symlinked).
+2. All stored content using `smileobject://` URIs must be migrated to
+   `expobject://` — a database search-and-replace on the `ezcontentobject_attribute`
+   `data_text` column is required.
+3. Update `.htaccess` rewrite rules (see Installation § 2).
+4. Update `ActiveExtensions` in your site INI settings.
+5. Clear all caches.
+
+---
+
+License
+-------
+
+GNU Lesser General Public License v2 — see `fckeditor/license.txt`.

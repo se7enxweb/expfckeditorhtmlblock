@@ -35,15 +35,15 @@
 // you.
 //
 
-	require_once 'lib/ezutils/classes/ezsys.php' ;
-	require_once 'kernel/classes/datatypes/ezbinaryfile/ezbinaryfile.php' ;
+// require_once 'lib/ezutils/classes/ezsys.php' ;
+// require_once 'kernel/classes/datatypes/ezbinaryfile/ezbinaryfile.php' ;
 
   class StringOperators
   {
 		var $db = null ;
 	
     /*! Constructor  */
-    function StringOperators()
+    function __construct()
     {
       $this->Operators = array (
         'fckObjectIdConvert' 
@@ -122,7 +122,7 @@
     function fckObjectIdConvert( $string1 )
     {
                         // preg_match_all('/href=".*socle_relation_id_([0-9]+)(\?.*)?(#.*)?"/Ui', $string1, &$matches);
-                        // remplacé pour ne pas manger de lien (si plusieurs liens à la suite...)
+                        // remplacï¿½ pour ne pas manger de lien (si plusieurs liens ï¿½ la suite...)
 			//preg_match_all('/href="[^"]*socle_relation_id_([0-9]+)(\?[^"]*)?(#[^"]*)?"/Ui', $string1, &$matches);
 			preg_match_all('/href="[^"]*socle_relation_id_([0-9]+)(\?[^"]*)?(#[^"]*)?"/Ui', $string1, $matches);
 			

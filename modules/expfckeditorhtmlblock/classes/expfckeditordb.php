@@ -40,7 +40,7 @@
 	include_once ('lib/ezfile/classes/ezfile.php');
 	include_once ('extension/smilesocle/modules/smilesocle/functions.php');
 
-  class smileFCKEditorDB
+  class expFCKEditorDB
   {
     var $db = null;
 		var $db_site_select = null ;
@@ -48,7 +48,7 @@
 		var $db_source = null ;
 		var $db_target = null ;
 		
-    function smileFCKEditorDB ()
+    function __construct ()
     {
       if (!$this->db)
       {
@@ -68,7 +68,7 @@
       }
     }
 		
-		function smileGetRelatedObjects($object, $version)
+		function getRelatedObjects($object, $version)
 		{			
 				$result = array() ;
 							

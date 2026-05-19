@@ -41,8 +41,8 @@
             			imgwidth="{$Nodes.item.data_map.image.content.original.width}"
             			imgheight="{$Nodes.item.data_map.image.content.original.height}"
             		{/if}
-            		value="smileobject://{$Nodes.item.node_id}"
-            type="radio" name="lien" value="smileobject://{$Nodes.item.node_id}" />
+            		value="expobject://{$Nodes.item.node_id}"
+            type="radio" name="lien" value="expobject://{$Nodes.item.node_id}" />
         </td>
 
         {* Name *}

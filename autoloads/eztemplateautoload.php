@@ -38,14 +38,13 @@
   // Operator autoloading
   $eZTemplateOperatorArray = array();
   $eZTemplateOperatorArray[] = array (
-    'script' => 'extension/smilefckeditor/autoloads/stringoperators.php',
+    'script' => 'extension/expfckeditorhtmlblock/autoloads/stringoperators.php',
     'class' => 'StringOperators',
     'operator_names' => array (
       'fckObjectIdConvert'
     )   
   );
-  $eZTemplateOperatorArray[] = array( 'script' => 'extension/smilefckeditor/autoloads/smilelinktomedia.php',
-                                    'class' => 'SmileLinktomedia',
+  $eZTemplateOperatorArray[] = array( 'script' => 'extension/expfckeditorhtmlblock/autoloads/explinktomedia.php',
+                                    'class' => 'ExpLinktomedia',
                                     'operator_names' => array( 'linktomedia', 'linktopicture' ) );
 ?>
-

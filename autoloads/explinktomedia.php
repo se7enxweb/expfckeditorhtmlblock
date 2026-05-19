@@ -1,9 +1,9 @@
 <?php
 
 /*!
-  \class   SmileLinktomedia smilelinktomedia.php
+  \class   ExpLinktomedia explinktomedia.php
   \ingroup eZTemplateOperators
-  \brief   Prend en charge l'op�rateur de template linktomedia qui transforme une cha�ne de type "smileobject://12" en lien vers la source de l'objet 12
+  \brief   Prend en charge l'op�rateur de template linktomedia qui transforme une cha�ne de type "expobject://12" en lien vers la source de l'objet 12
   \version 1.0
   \date    12 Octobre 2005 3:39:24 pm
   \author  Guillaume Boit
@@ -13,12 +13,12 @@
 include_once("kernel/classes/ezcontentobjecttreenode.php");
 include_once("kernel/classes/ezcontentobject.php");
 
-class SmileLinktomedia
+class ExpLinktomedia
 {
     /*!
       Constructeur, par d�faut ne fait rien.
     */
-    function SmileLinktomedia()
+    function __construct()
     {
        $this->Operators = array( 'linktomedia', 'linktopicture');
     }
@@ -82,7 +82,7 @@ class SmileLinktomedia
     	{
     		$chemin = '/';	
     	}
-    	$expleznode = explode("smileobject://", $lien);
+    	$expleznode = explode("expobject://", $lien);
 		$iterator = 0;
 		foreach ($expleznode as $segmeznode) {
 			if ($iterator != 0) { //on parcourt les segments commen�ant par des num�ros de noeuds

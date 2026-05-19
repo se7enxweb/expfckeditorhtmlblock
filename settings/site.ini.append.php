@@ -1,9 +1,9 @@
 <?php /* #?ini charset="utf-8"?
 
 [RegionalSettings]
-#TranslationExtensions[]=smilefckeditor
+#TranslationExtensions[]=expfckeditorhtmlblock
 
 [TemplateSettings]
-ExtensionAutoloadPath[]=smilefckeditor
+ExtensionAutoloadPath[]=expfckeditorhtmlblock
  
 */ ?>
