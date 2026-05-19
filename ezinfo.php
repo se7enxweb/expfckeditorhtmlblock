@@ -2,8 +2,8 @@
 /**
  * File containing the expfckeditorhtmlblockInfo class.
  *
- * @copyright Copyright (C) 2009-2022 xrow GmbH. All rights reserved.
- * @license GPL
+ * @copyright Copyright (C) 1988 - 2026 7x. All rights reserved.
+ * @license GNU General Public License v2.0
  */
 class expfckeditorhtmlblockInfo
 {
@@ -11,7 +11,7 @@ class expfckeditorhtmlblockInfo
     {
         return array(
             'Name' => "Exponential FCKeditor HTML Block",
-            'Version' => "1.3.5",
+            'Version' => "1.4.0",
             'Copyright' => "Copyright (C) 1998 - 2026 7x",
             'Author' => "7x",
             'License' => "GNU General Public License v2.0" );

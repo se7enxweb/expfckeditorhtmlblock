@@ -39,77 +39,60 @@
 {literal}
 <script type="text/javascript">
 
-	var oEditor = window.parent.InnerDialogLoaded() ; 
-	var FCK = oEditor.FCK ; 
-	var FCKLang = oEditor.FCKLang ; 
-	var FCKeZPublishLink = oEditor.FCKeZPublishLink ;
-	
-	window.parent.SetOkButton( true ) ; // Show the "Ok" button. 
-	
-	if (window.addEventListener)
-	{
-		window.addEventListener('load', getSelection, false) ;
- 	}
-	else
-		if (window.attachEvent)
-		{
- 			window.attachEvent('onload', getSelection) ;
- 		}
-		else
-		{
- 			window.onload = getSelection ;
-		}
-	
-	function Ok() 
-	{ 
-		var object = false ;
-		var caption = document.insertlink.caption.value ;
-	
-		if (document.insertlink.related_object.checked)
-		{
-			object = document.insertlink.related_object.value ;
-		}
-		else
-		{
-			for (i = 0 ; i < document.insertlink.related_object.length ; i++)
-			{
-				with (document.insertlink.related_object[i])
-				{
-					if (document.insertlink.related_object[i].checked)
-					{
-						object = document.insertlink.related_object[i].value ;
-					}
-	      }
-	    }
-		}
+    /**
+     * Open the media browser in link mode (window.name != 'expeZimage').
+     * When the user selects an object, mediabrowser.js calls
+     * window.opener.expCK5_onLinkSelected(link) where link = 'expobject://ID'.
+     * We strip the prefix and populate the manual object ID field.
+     */
+    function BrowseContent() {
+        window.expCK5_onLinkSelected = function (link) {
+            delete window.expCK5_onLinkSelected;
+            var objectId = link.replace(/^expobject:\/\//, '');
+            document.getElementById('manual_object_id').value = objectId;
+            document.getElementById('manual_object_id').focus();
+        };
+        var base = window.location.href.replace(/\/expfckeditorhtmlblock\/.*$/, '');
+        window.open(
+            base + '/layout/set/mediabrowser/(dispnodeid)/2',
+            'expEzLinkBrowser',
+            'width=750,height=500,resizable=yes,scrollbars=yes'
+        );
+    }
 
-		if (object)
-		{
-			FCKeZPublishLink.Add(object, caption) ;  		
-		}
-	
-		return true ; 
-	} 
-	
-	function getSelection()
-	{
-		var selection ;
-		
-		if (document.all)
-		{
-			selection = new String(FCK.EditorDocument.selection.createRange().text) ;
-		}
-		else
-		{
-			selection = new String(FCK.EditorWindow.getSelection()); 
-		}
-	
-		if (selection.length > 0)
-		{
-			document.insertlink.caption.value = selection ;
-		} 
-	}
-	
+    /**
+     * CKEditor 5 bridge for the eZ Publish insertlink popup.
+     *
+     * Priority: manual object ID input > radio button selection.
+     * Calls window.opener.expCK5_onEzLinkSelected(objectId, caption).
+     */
+    function Ok() {
+        var object  = false;
+        var caption = document.insertlink.caption.value;
+
+        /* 1. Manual object ID input takes priority */
+        var manualId = (document.getElementById('manual_object_id').value || '').trim();
+        if (manualId) {
+            object = manualId;
+        } else {
+            /* 2. querySelectorAll handles single or multiple radio buttons correctly */
+            var radios = document.querySelectorAll('input[name=related_object]');
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    object = radios[i].value;
+                    break;
+                }
+            }
+        }
+
+        if (object && window.opener && typeof window.opener.expCK5_onEzLinkSelected === 'function') {
+            window.opener.expCK5_onEzLinkSelected(object, caption);
+        }
+
+        window.close();
+        return true;
+    }
+
 </script>
 {/literal}
 
@@ -118,6 +101,13 @@
 <div>
 <label>{'Caption'|i18n('content')}:</label>
 <input type="text" id="caption" size="32" name="caption"/>
+</div>
+
+<div>
+<label>{'Node ID'|i18n('content')}:</label>
+<input type="text" id="manual_object_id" size="12" placeholder="e.g. 42" />
+&nbsp;
+<input type="button" class="button" value="{'Browse content tree'|i18n('content')}&hellip;" onclick="BrowseContent(); return false;" />
 </div>
 
 <div class="context-block">
@@ -139,7 +129,7 @@
 {let owner_object=fetch('content', 'object', hash('object_id', $object))}
 <tr><th colspan="3">This object</th></tr>
 <tr class="bglight">
-    <td width="50"><input type="radio" name="related_object" value="{$owner_object.id}"></td>
+    <td width="50"><input type="radio" name="related_object" value="{$owner_object.main_node_id}"></td>
     <td width="250">{$owner_object.name}</td>
     <td width="200">{$owner_object.class_name}</td>
 </tr>
@@ -149,7 +139,7 @@
 <tr><th colspan="3">Related objects</th></tr>
 {section loop=$related_object_list sequence=array(bglight, bgdark)}
 <tr class="{$:sequence}">
-    <td width="50"><input type="radio" name="related_object" value="{$:item.id}"></td>
+    <td width="50"><input type="radio" name="related_object" value="{$:item.main_node_id}"></td>
     <td width="250">{$:item.name}</td>
     <td width="200">{$:item.class_name}</td>
 </tr>
@@ -164,7 +154,9 @@
 <div class="controlbar">
 {* DESIGN: Control bar START *}<div class="box-bc"><div class="box-ml"><div class="box-mr"><div class="box-tc"><div class="box-bl"><div class="box-br">
     <div class="block">
-		&nbsp;
+        <input type="button" class="button-primary" value="{'OK'|i18n('content')}" onclick="return Ok();">
+        &nbsp;
+        <input type="button" class="button" value="{'Cancel'|i18n('content')}" onclick="window.close();">
     </div>
 {* DESIGN: Control bar END *}</div></div></div></div></div></div>
 </div>

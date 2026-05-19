@@ -1,56 +1,64 @@
+/**
+ * mediabrowser.js — CKEditor 5 bridge for the eZ Publish media/link browser
+ * popup.
+ *
+ * This popup is opened by ExpEzImagePlugin (window.name === 'expeZimage') or
+ * ExpEzLinkPlugin (window.name !== 'expeZimage').  On submit it calls the
+ * appropriate callback registered on window.opener by the plugin before the
+ * popup was opened.
+ */
+window.onload = function () {
+    var isImageMode = (window.name === 'expeZimage');
 
-  //var sUrl = GetE('txtUrl').value ;
-  window.onload = function () {
-    // Show the "Ok" button.
-    window.parent.SetOkButton( true ) ;
-    if(window.parent.document.title == 'expeZimage') {
-    	document.forms[1].nurBilder.value="true";
+    if (document.forms[1] && document.forms[1].nurBilder) {
+        document.forms[1].nurBilder.value = isImageMode ? 'true' : 'false';
     }
-	else {
-		document.forms[1].nurBilder.value="false";
-	}
 
-	if ((document.forms[1].nurBilder.value=="true")&&
-			(document.forms[0].lien.title=="S?lectionnez le m?dia ? lier"))
-	  	document.forms[0].lien.disabled = true;
-	else {
-		for (i=0; i<document.forms[0].lien.length; ++i) {
-			if ((document.forms[1].nurBilder.value=="true")&&
-				(document.forms[0].lien[i].title=="S?lectionnez le m?dia ? lier"))
-		  	document.forms[0].lien[i].disabled = true;
-		}
-	}
-  }
-
-  function Ok() {
-    var link = '';
-    if (document.forms[0].lien.value) link=document.forms[0].lien.value;
-    for (i=0; i<document.forms[0].lien.length; ++i) {
-      if (document.forms[0].lien[i].checked) {
-        link = document.forms[0].lien[i].value;
-        if (document.forms[0].lien[i].imgwidth) {
-	       var width = document.forms[0].lien[i].imgwidth;
-     	   var height = document.forms[0].lien[i].imgheight;
+    if (isImageMode && document.forms[0] && document.forms[0].lien) {
+        var lienField = document.forms[0].lien;
+        if (lienField.title && lienField.title.indexOf('\u00e9') !== -1) {
+            /* Single <select> element — disable non-image entries. */
+            lienField.disabled = true;
+        } else if (lienField.length) {
+            for (var i = 0; i < lienField.length; i++) {
+                if (lienField[i].title && lienField[i].title.indexOf('\u00e9') !== -1) {
+                    lienField[i].disabled = true;
+                }
+            }
         }
-      }
+    }
+};
+
+function Ok() {
+    var link   = '';
+    var width, height, imgUrl;
+
+    /* querySelectorAll always returns a NodeList even for a single element,
+       unlike document.forms[0].lien which is the element itself when count=1. */
+    var radios = document.querySelectorAll('input[name=lien]');
+    for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+            link   = radios[i].value;
+            width  = radios[i].getAttribute('imgwidth')  || undefined;
+            height = radios[i].getAttribute('imgheight') || undefined;
+            imgUrl = radios[i].getAttribute('data-imgurl') || undefined;
+            break;
+        }
     }
 
-    if (document.forms[1].nurBilder.value=="false") {
-    	var oEditor	= window.parent.InnerDialogLoaded() ;
-    	oEditor.FCKUndo.SaveUndoStep() ;
-    	oEditor.FCK.CreateLink(link);
+    var isImageMode = document.forms[1] &&
+                      document.forms[1].nurBilder &&
+                      document.forms[1].nurBilder.value === 'true';
+
+    if (window.opener) {
+        if (!isImageMode && typeof window.opener.expCK5_onLinkSelected === 'function') {
+            window.opener.expCK5_onLinkSelected(link);
+        } else if (isImageMode && typeof window.opener.expCK5_onImageSelected === 'function') {
+            window.opener.expCK5_onImageSelected(link, width, height, imgUrl);
+        }
     }
-    else
-    {
-    	var oEditor	= window.parent.InnerDialogLoaded() ;
-   		oEditor.FCKUndo.SaveUndoStep() ;
-    	oImage = oEditor.FCK.CreateElement( 'IMG' ) ;
-    	oImage.setAttribute('src', link, 0);
-    	if (typeof(width) != "undefined") {
-    		oImage.setAttribute('width', width, 0);
-    		oImage.setAttribute('height', height, 0);
-    	}
-    }
-    window.top.close() ;
+
+    window.close();
     return true;
-  }
+}
+

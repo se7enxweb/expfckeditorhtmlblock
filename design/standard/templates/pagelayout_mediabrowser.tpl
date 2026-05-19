@@ -1,42 +1,19 @@
 {* set-block scope=root variable=cache_ttl}0{/set-block *}
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="no" lang="no">
+<!DOCTYPE html>
+<html lang="no">
 
 <head>
-{include uri='design:page_head.tpl'}
-
-{* cache-block keys=array('navigation_tabs',$navigation_part.identifier,$current_user.contentobject_id) *}
-{* Cache header for each navigation part *}
-
-<script language="JavaScript" type="text/javascript" src={'javascript/tools/ezjsselection.js'|ezdesign}></script>
-{section name=JavaScript loop=ezini( 'JavaScriptSettings', 'JavaScriptList', 'design.ini' ) }
-<script language="JavaScript" type="text/javascript" src={concat( 'javascript/',$:item )|ezdesign}></script>
-{/section}
+<meta charset="utf-8">
+<title>Media browser</title>
 
 {let node=fetch(content, node, hash(node_id, $module_result.node_id))}
 
 <style type="text/css">
     @import url({'stylesheets/core.css'|ezdesign});
-    @import url({'stylesheets/site.css'|ezdesign});
     @import url({'stylesheets/debug.css'|ezdesign});
     @import url({'stylesheets/treemenu.css'|ezdesign});
-{section var=css_file loop=ezini( 'StylesheetSettings', 'CSSFileList', 'design.ini' )}
-    @import url({concat( 'stylesheets/',$css_file )|ezdesign});
-{/section}
 </style>
-
-{section show=ezpreference( 'admin_left_menu_width' )}
-{let left_menu_widths=ezini( 'LeftMenuSettings', 'MenuWidth', 'menu.ini' )
-     left_menu_width=$left_menu_widths[ezpreference( 'admin_left_menu_width' )]}
-<style type="text/css">
-div#leftmenu {ldelim} width: {$left_menu_width}em; {rdelim}
-div#maincontent {ldelim} margin-left: {sum( $left_menu_width, 0.5 )}em; {rdelim}
-</style>
-{/let}
-{/section}
-
 
 </head>
 
@@ -46,8 +23,7 @@ div#maincontent {ldelim} margin-left: {sum( $left_menu_width, 0.5 )}em; {rdelim}
 
 <!-- Children START -->
 
-<script src={'extension/expfckeditorhtmlblock/fckeditor/editor/dialog/common/fck_dialog_common.js'|ezroot()} type="text/javascript"></script>
-<script src={'extension/expfckeditorhtmlblock/javascript/mediabrowser.js'|ezroot()} type="text/javascript"></script>
+<script src={'/extension/expfckeditorhtmlblock/javascript/mediabrowser.js'|ezroot} type="text/javascript"></script>
 
 
 
@@ -88,8 +64,8 @@ div#maincontent {ldelim} margin-left: {sum( $left_menu_width, 0.5 )}em; {rdelim}
 {* DESIGN: Header START *}<div class="box-header"><div class="box-tc"><div class="box-ml"><div class="box-mr"><div class="box-tl"><div class="box-tr">
 
 {if $dispnode|ne($nodemain)}
-     <a href="{'layout/set/mediabrowser'|ezurl(no)}/{concat($node.path_identification_string|wash,"/(dispnodeid)/",$dispnode.parent_node_id)}">
-      <img src={'back-button-16x16.gif'|ezimage} alt='Niveau précédent'></a>&nbsp;
+     <a href={concat('layout/set/mediabrowser/(dispnodeid)/',$dispnode.parent_node_id)|ezurl(no)}>
+      <img src={'back-button-16x16.gif'|ezimage} alt='Niveau prï¿½cï¿½dent'></a>&nbsp;
 {/if}
 {undef $nodemain}
 	<b>
@@ -185,7 +161,7 @@ div#maincontent {ldelim} margin-left: {sum( $left_menu_width, 0.5 )}em; {rdelim}
          uri='design:navigator/google.tpl'
          page_uri=concat("/(dispnodeid)/",$dispnodeid)
          item_count=$children_count
-         view_parameters=hash('offset', $offset)
+         view_parameters=hash('offset', $offset|int)
          item_limit=$number_of_items
          node_id=$Nodes.item.node_id}
 
@@ -210,8 +186,7 @@ div#maincontent {ldelim} margin-left: {sum( $left_menu_width, 0.5 )}em; {rdelim}
 </div>
 
 <div class="block">
-
-
+<input type="button" value="OK" onclick="Ok(); return false;" />
 {* DESIGN: Control bar END *}</div></div></div></div></div></div>
 
 </div>

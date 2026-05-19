@@ -31,15 +31,16 @@
 
         {* Radio selector *}
         <td>
-            <input 	{if eq($Nodes.item.class_name, 'Répertoire')}
+            <input 	{if eq($Nodes.item.class_name, 'Rï¿½pertoire')}
             			disabled=true
             		{/if}
             		{if ne($Nodes.item.class_name, 'Image')}
-            			title="Sélectionnez le média à lier"
+            			title="Sï¿½lectionnez le mï¿½dia ï¿½ lier"
             		{else}
-            			title="Sélectionnez le média à lier."
+            			title="Sï¿½lectionnez le mï¿½dia ï¿½ lier."
             			imgwidth="{$Nodes.item.data_map.image.content.original.width}"
             			imgheight="{$Nodes.item.data_map.image.content.original.height}"
+            			data-imgurl={$Nodes.item.data_map.image.content.original.url|ezroot}
             		{/if}
             		value="expobject://{$Nodes.item.node_id}"
             type="radio" name="lien" value="expobject://{$Nodes.item.node_id}" />
@@ -48,7 +49,7 @@
         {* Name *}
         <td>{$Nodes.item.class_identifier|class_icon( small, '[%classname]'|i18n( 'design/admin/node/view/thumbnail',, hash( '%classname', $Nodes.item.name ) ) )}
         {if ne($Nodes.item.children_count,0)}
-        	<a href="{''|ezurl(no)}/{concat("(dispnodeid)/",$Nodes.item.node_id)}">
+                <a href={concat('layout/set/mediabrowser/(dispnodeid)/',$Nodes.item.node_id)|ezurl(no)}>
         {/if}
          	{$Nodes.item.name}</a>
          </td>

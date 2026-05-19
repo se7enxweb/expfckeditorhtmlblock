@@ -37,32 +37,42 @@
 
 {default attribute_base='ContentObjectAttribute' html_class='full'}
 
-<script type="text/javascript" src={'/extension/expfckeditorhtmlblock/fckeditor/fckeditor.js'|ezroot}></script>
+<link rel="stylesheet" href={'/extension/expfckeditorhtmlblock/ckeditor5/ckeditor5.css'|ezroot}>
+<script src={'/extension/expfckeditorhtmlblock/ckeditor5/ckeditor5.umd.js'|ezroot}></script>
+<script src={'/extension/expfckeditorhtmlblock/ckeditor5/expfckeditor.js'|ezroot}></script>
+
 <textarea id="{$attribute_base}_fcke_{$attribute.id}"
           class="{eq( $html_class, 'half' )|choose( 'box', 'halfbox' )}"
-	  name="{$attribute_base}_data_text_{$attribute.id}"
-	  cols="70">{$attribute.content|wash}</textarea>
+          name="{$attribute_base}_data_text_{$attribute.id}"
+          cols="70">{$attribute.content|wash}</textarea>
 
-<script type="text/javascript">
+<script>
+{literal}
+(function () {
+{/literal}
+    var textareaId = '{$attribute_base}_fcke_{$attribute.id}';
+    var ezConfig = {literal}{
+        siteAccessPath : '{/literal}{ezsys('indexdir')}{literal}',
+        objectId       : {/literal}{$attribute.contentobject_id}{literal},
+        version        : {/literal}{$attribute.version}{literal},
+        height         : {/literal}{$attribute.contentclass_attribute.data_int1|mul(20)}{literal}
+    };
 
-  var oFCKeditor{$attribute.id} = new FCKeditor ("{$attribute_base}_fcke_{$attribute.id}");
+    function start() {
+        if (typeof initExpCKEditor5 === 'function') {
+            initExpCKEditor5(textareaId, ezConfig);
+        } else {
+            console.error('initExpCKEditor5 not found \u2014 check that expfckeditor.js loaded correctly.');
+        }
+    }
 
-  oFCKeditor{$attribute.id}.BasePath = {'/extension/expfckeditorhtmlblock/fckeditor/'|ezroot()} ;	// chemin vers fckeditor
-  oFCKeditor{$attribute.id}.Height = 20*{$attribute.contentclass_attribute.data_int1};
-  oFCKeditor{$attribute.id}.Config["StylesXmlPath"] = "{ezsys('wwwdir')}/extension/expfckeditorhtmlblock/fckeditor/fckstyles.xml" ;		// fichier au format XML pour la liste déroulantes de style
-  oFCKeditor{$attribute.id}.Config["LinkBrowserURL"] = "{ezsys('wwwdir')}/extension/expfckeditorhtmlblock/fckeditor/editor/filemanager/browser/default/browser.html?Connector=connectors/php/connector.php&ServerPath={ezsys('wwwdir')}/{ezini('FileSettings','VarDir')}/storage/fckeditor" ;
-  oFCKeditor{$attribute.id}.Config["ImageBrowserURL"] = "{ezsys('wwwdir')}/extension/expfckeditorhtmlblock/fckeditor/editor/filemanager/browser/default/browser.html?Connector=connectors/php/connector.php&ServerPath={ezsys('wwwdir')}/{ezini('FileSettings','VarDir')}/storage/fckeditor" ;
-  oFCKeditor{$attribute.id}.Config["FlashBrowserURL"] = "{ezsys('wwwdir')}/extension/expfckeditorhtmlblock/fckeditor/editor/filemanager/browser/default/browser.html?Connector=connectors/php/connector.php&ServerPath={ezsys('wwwdir')}/{ezini('FileSettings','VarDir')}/storage/fckeditor" ;
-  oFCKeditor{$attribute.id}.Config["BaseHref"] = '' ;
-  oFCKeditor{$attribute.id}.Config["CustomConfigurationsPath"] = "{ezsys('wwwdir')}/extension/expfckeditorhtmlblock/fckeditor/fckconfig.js" ;	// fichier de configuration js
-
-
-  oFCKeditor{$attribute.id}.Config["ezobject"] = {$attribute.contentobject_id} ;		// identifiant de l'objet
-  oFCKeditor{$attribute.id}.Config["ezsiteaccess"] = "{ezsys('indexdir')}" ;			// url ezpublish
-  oFCKeditor{$attribute.id}.Config["ezversion"] = {$attribute.version} ;				// version de l'objet
-
-  oFCKeditor{$attribute.id}.ReplaceTextarea ();
-
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+    } else {
+        start();
+    }
+}());
+{/literal}
 </script>
 {/default}
 
